@@ -2,8 +2,8 @@ require 'csv'
 
 class LocationService
   class NotFoundError < StandardError; end
-  # initialize the class with data a hash of zip-code to location info
-  # that will not change and should not be accessible from the outside
+  # initialize the class with data a hash of zip-code to location
+  # info that will not change (soon, at least, and not without some big notices)
   @@locations_by_zip_code = begin
     path = Rails.root.join('lib/data/US_ZIP_codes_to_longitude_and_latitude.csv')
     rows = ::CSV.read path, headers: true

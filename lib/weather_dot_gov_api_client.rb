@@ -9,10 +9,14 @@ class WeatherDotGovApiClient
 
       # weather.gov first makes you request grid points for the location
       location_properties = get_location_properties(rounded_latitude, rounded_longitude)
-      # there's a url that comes in the properties too, but I want to reuse my @connection
+      # use the data bits to build the path to the corresponding forecast data
       path = build_forecast_url_path(location_properties)
-
+      # the second api call
       get_forecast(path)
+    rescue Faraday::Error => e
+      raise ApiError.new <<~ERROR
+          There was an error connecting to api.weather.gov: #{e.message}
+        ERROR
     end
 
     private

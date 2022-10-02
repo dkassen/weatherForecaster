@@ -4,7 +4,7 @@ class WeatherForecastController < ApplicationController
   end
 
   rescue_from WeatherDotGovApiClient::ApiError do |e|
-    # Bugsnag.notify(e.message) because those were mroe for debugging purposes
+    # Bugsnag.notify(e.message) because those were more for debugging purposes
     render json: { message: "There was an issue fetching forecast information. Please try again." }, status: 500
   end
 

@@ -110,5 +110,20 @@ RSpec.describe WeatherDotGovApiClient do
         end
       end
     end
+
+    context "when a Faraday error occurs" do
+      before do
+        allow_any_instance_of(Faraday::Connection)
+          .to receive(:get)
+          .and_raise Faraday::Error.new('Connection failed')
+      end
+
+      it "raises an error with a descriptive message" do
+        expect { subject }.to raise_error WeatherDotGovApiClient::ApiError do |e|
+          expect(e.message).to include 'There was an error connecting to api.weather.gov'
+          expect(e.message).to include 'Connection failed'
+        end
+      end
+    end
   end
 end
