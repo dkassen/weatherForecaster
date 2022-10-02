@@ -11,7 +11,12 @@ module WeatherForecaster
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
 
-    config.autoload_paths += %W(#{config.root}/app/services #{config.root}/app/models #{config.root}/lib/)
+    config.autoload_paths += %W(
+      #{config.root}/app/services
+      #{config.root}/app/models
+      #{config.root}/lib/
+      #{config.root}/presenters/
+    )
 
     # Configuration for the application, engines, and railties goes here.
     #
