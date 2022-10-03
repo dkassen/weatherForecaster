@@ -2,7 +2,10 @@ require 'spec_helper'
 
 RSpec.describe WeatherForecastController do
   let(:json) { JSON.parse(response.body) }
-
+  
+  # do not keep data in the cache across tests
+  after { Rails.cache.clear }
+  
   context "when the supplied zip code format is valid" do
     let(:zip_code) { 95014 }
 
@@ -42,6 +45,40 @@ RSpec.describe WeatherForecastController do
 
         it "returns a successful response" do
           get :show, params: { zip_code: zip_code_4 }
+
+          expect(response).to be_successful
+          expect(json['forecast']).to eq forecast
+        end
+      end
+
+      it "caches the result" do
+        expect(Rails.cache)
+          .to receive(:write)
+          .with(
+            zip_code.to_s,
+            instance_of(String),
+            hash_including(expires_in: 30.minutes)
+          ).and_call_original
+
+        get :show, params: { zip_code: zip_code }
+
+        
+        expect(response).to be_successful
+        expect(json['forecast']).to eq forecast
+      end
+
+      context "when the result has been cached" do
+        before { get :show, params: { zip_code: zip_code } }
+
+        it "does not call underlying services" do
+          expect(WeatherDotGovForecastService)
+            .not_to receive(:get_forecast_for_zip_code)
+
+          get :show, params: { zip_code: zip_code }
+        end
+
+        it "returns a successful response" do
+          get :show, params: { zip_code: zip_code }
 
           expect(response).to be_successful
           expect(json['forecast']).to eq forecast

@@ -18,6 +18,9 @@ module WeatherForecaster
       #{config.root}/presenters/
     )
 
+    # Cache results in memory for this little app
+    config.cache_store = :memory_store, { size: 64.megabytes }
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
